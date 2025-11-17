@@ -26,15 +26,26 @@ class WiFiSecurityAnalyzer:
                     "Недостаточная длина ключа (40/104 бит)",
                     "Статические ключи шифрования"
                 ],
-                "attack_tools": ["aircrack-ng", "wifite", "WEPAttack", "airreplay-ng"],
+                "attack_tools": [
+                    {"name": "aircrack-ng", "description": "Комплексный набор для взлома беспроводных сетей", "url": "https://www.aircrack-ng.org/"},
+                    {"name": "wifite", "description": "Автоматизированный инструмент для тестирования Wi-Fi", "url": "https://github.com/kimocoder/wifite2"},
+                    {"name": "WEPAttack", "description": "Специализированный инструмент для атак на WEP", "url": "https://sourceforge.net/projects/wepattack/"},
+                    {"name": "airreplay-ng", "description": "Генерация трафика для ускорения взлома", "url": "https://www.aircrack-ng.org/doku.php?id=airreplay-ng"}
+                ],
                 "articles": [
-                    {"title": "Полный взлом WEP за 5 минут", "url": "https://www.aircrack-ng.org/doku.php?id=breaking_wep"},
-                    {"title": "Уязвимости протокола WEP", "url": "https://en.wikipedia.org/wiki/Wired_Equivalent_Privacy#Security_issues"},
-                    {"title": "Практическое руководство по взлому WEP", "url": "https://www.kali.org/tutorials/wep-wireless-penetration-testing/"}
+                    {"title": "Полный взлом WEP за 5 минут", "url": "https://www.aircrack-ng.org/doku.php?id=breaking_wep", "type": "Практическое руководство"},
+                    {"title": "Уязвимости протокола WEP", "url": "https://en.wikipedia.org/wiki/Wired_Equivalent_Privacy#Security_issues", "type": "Теоретическая основа"},
+                    {"title": "Практическое руководство по взлому WEP", "url": "https://www.kali.org/tutorials/wep-wireless-penetration-testing/", "type": "Пошаговая инструкция"}
                 ],
                 "exploitation_time": "1-10 минут",
                 "success_rate": "95%",
-                "complexity": "Низкая"
+                "complexity": "Низкая",
+                "attack_scenarios": [
+                    "ARP request replay атака для генерации IV",
+                    "Fragmentation атака для получения PRGA",
+                    "Chopchop атака для расшифровки пакетов",
+                    "PTW атака для ускорения взлома"
+                ]
             },
             "WPA-TKIP": {
                 "risk_level": "ВЫСОКИЙ", 
@@ -44,15 +55,24 @@ class WiFiSecurityAnalyzer:
                     "Восстановление временного ключа",
                     "Уязвимость к атакам перебора"
                 ],
-                "attack_tools": ["tkiptun-ng", "aircrack-ng", "pyrit"],
+                "attack_tools": [
+                    {"name": "tkiptun-ng", "description": "Специализированная атака на TKIP", "url": "https://www.aircrack-ng.org/doku.php?id=tkiptun-ng"},
+                    {"name": "aircrack-ng", "description": "Взлом через перебор handshake", "url": "https://www.aircrack-ng.org/"},
+                    {"name": "pyrit", "description": "Высокопроизводительный перебор WPA", "url": "https://github.com/JPaulMora/Pyrit"}
+                ],
                 "articles": [
-                    {"title": "Атаки на протокол TKIP", "url": "https://en.wikipedia.org/wiki/Temporal_Key_Integrity_Protocol#Security_issues"},
-                    {"title": "Beck-Tews атака на WPA-TKIP", "url": "https://link.springer.com/chapter/10.1007/978-3-642-04474-8_3"},
-                    {"title": "Ohigashi-Morii атака", "url": "https://ieeexplore.ieee.org/document/5207650"}
+                    {"title": "Атаки на протокол TKIP", "url": "https://en.wikipedia.org/wiki/Temporal_Key_Integrity_Protocol#Security_issues", "type": "Теоретическая основа"},
+                    {"title": "Beck-Tews атака на WPA-TKIP", "url": "https://link.springer.com/chapter/10.1007/978-3-642-04474-8_3", "type": "Академическое исследование"},
+                    {"title": "Ohigashi-Morii атака", "url": "https://ieeexplore.ieee.org/document/5207650", "type": "Научная публикация"}
                 ],
                 "exploitation_time": "10-60 минут",
                 "success_rate": "70%",
-                "complexity": "Средняя"
+                "complexity": "Средняя",
+                "attack_scenarios": [
+                    "Michael countermeasure exploitation",
+                    "ARP poisoning через TKIP",
+                    "Beck-Tews инъекция пакетов"
+                ]
             },
             "WPA2-CCMP": {
                 "risk_level": "СРЕДНИЙ",
@@ -63,16 +83,28 @@ class WiFiSecurityAnalyzer:
                     "Уязвимость PMKID",
                     "Оффлайн-атаки на handshake"
                 ],
-                "attack_tools": ["aircrack-ng", "hashcat", "reaver", "bully", "hcxdumptool"],
+                "attack_tools": [
+                    {"name": "aircrack-ng", "description": "Основной инструмент для взлома WPA2", "url": "https://www.aircrack-ng.org/"},
+                    {"name": "hashcat", "description": "Высокопроизводительный перебор хешей", "url": "https://hashcat.net/hashcat/"},
+                    {"name": "reaver", "description": "Атака на WPS", "url": "https://github.com/t6x/reaver-wps-fork-t6x"},
+                    {"name": "bully", "description": "Альтернатива reaver для WPS", "url": "https://github.com/aanarchyy/bully"},
+                    {"name": "hcxdumptool", "description": "Захват PMKID", "url": "https://github.com/ZerBea/hcxdumptool"}
+                ],
                 "articles": [
-                    {"title": "KRACK атака на WPA2", "url": "https://www.krackattacks.com/"},
-                    {"title": "Уязвимости WPS", "url": "https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup#Security_issues"},
-                    {"title": "PMKID атаки", "url": "https://hashcat.net/forum/thread-7717.html"},
-                    {"title": "WPA2 Handshake атаки", "url": "https://www.aircrack-ng.org/doku.php?id=simple_wpa_capture"}
+                    {"title": "KRACK атака на WPA2", "url": "https://www.krackattacks.com/", "type": "Официальный сайт уязвимости"},
+                    {"title": "Уязвимости WPS", "url": "https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup#Security_issues", "type": "Обзор уязвимостей"},
+                    {"title": "PMKID атаки", "url": "https://hashcat.net/forum/thread-7717.html", "type": "Форум взломщиков"},
+                    {"title": "WPA2 Handshake атаки", "url": "https://www.aircrack-ng.org/doku.php?id=simple_wpa_capture", "type": "Практическое руководство"}
                 ],
                 "exploitation_time": "2-48 часов",
                 "success_rate": "40%",
-                "complexity": "Высокая"
+                "complexity": "Высокая",
+                "attack_scenarios": [
+                    "Deauth атака для захвата handshake",
+                    "Pixie Dust атака на WPS",
+                    "PMKID оффлайн атака",
+                    "Словарная атака на handshake"
+                ]
             },
             "WPA3": {
                 "risk_level": "НИЗКИЙ",
@@ -82,15 +114,24 @@ class WiFiSecurityAnalyzer:
                     "Уязвимости реализации SAE",
                     "Атаки на side channels"
                 ],
-                "attack_tools": ["dragonblood", "wpa3-cracker", "hostapd-wpe"],
+                "attack_tools": [
+                    {"name": "dragonblood", "description": "Набор эксплойтов для WPA3", "url": "https://github.com/vanhoefm/dragonblood"},
+                    {"name": "wpa3-cracker", "description": "Инструменты для тестирования WPA3", "url": "https://github.com/zerosum0x0/WPA3Cracker"},
+                    {"name": "hostapd-wpe", "description": "Тестирование Enterprise сетей", "url": "https://github.com/OpenSecurityResearch/hostapd-wpe"}
+                ],
                 "articles": [
-                    {"title": "Dragonblood уязвимости WPA3", "url": "https://www.wpad.com/dragonblood/"},
-                    {"title": "WPA3 Security Analysis", "url": "https://www.wi-fi.org/discover-wi-fi/security"},
-                    {"title": "SAE протокол уязвимости", "url": "https://papers.mathyvanhoef.com/dragonblood.pdf"}
+                    {"title": "Dragonblood уязвимости WPA3", "url": "https://www.wpad.com/dragonblood/", "type": "Официальный сайт исследования"},
+                    {"title": "WPA3 Security Analysis", "url": "https://www.wi-fi.org/discover-wi-fi/security", "type": "Официальная документация"},
+                    {"title": "SAE протокол уязвимости", "url": "https://papers.mathyvanhoef.com/dragonblood.pdf", "type": "Научная публикация"}
                 ],
                 "exploitation_time": "Сложно оценить",
                 "success_rate": "15%",
-                "complexity": "Очень высокая"
+                "complexity": "Очень высокая",
+                "attack_scenarios": [
+                    "Downgrade до WPA2",
+                    "Timing-based side channel атаки",
+                    "Resource exhaustion атаки"
+                ]
             },
             "OPEN": {
                 "risk_level": "КРИТИЧЕСКИЙ",
@@ -101,15 +142,27 @@ class WiFiSecurityAnalyzer:
                     "Перехват сессий и cookies",
                     "Внедрение malware в трафик"
                 ],
-                "attack_tools": ["wireshark", "ettercap", "airbase-ng", "sslstrip", "driftnet"],
+                "attack_tools": [
+                    {"name": "wireshark", "description": "Анализ сетевого трафика", "url": "https://www.wireshark.org/"},
+                    {"name": "ettercap", "description": "MITM атаки и анализ сети", "url": "https://www.ettercap-project.org/"},
+                    {"name": "airbase-ng", "description": "Создание fake access points", "url": "https://www.aircrack-ng.org/doku.php?id=airbase-ng"},
+                    {"name": "sslstrip", "description": "Downgrade HTTPS соединений", "url": "https://moxie.org/software/sslstrip/"},
+                    {"name": "driftnet", "description": "Перехват изображений из трафика", "url": "https://github.com/deiv/driftnet"}
+                ],
                 "articles": [
-                    {"title": "Опасности открытых Wi-Fi сетей", "url": "https://www.kaspersky.ru/blog/open-wi-fi/10481/"},
-                    {"title": "Evil Twin атаки", "url": "https://en.wikipedia.org/wiki/Evil_twin_(wireless_networks)"},
-                    {"title": "MITM атаки в открытых сетях", "url": "https://www.acunetix.com/blog/articles/man-in-the-middle-attacks/"}
+                    {"title": "Опасности открытых Wi-Fi сетей", "url": "https://www.kaspersky.ru/blog/open-wi-fi/10481/", "type": "Общедоступная статья"},
+                    {"title": "Evil Twin атаки", "url": "https://en.wikipedia.org/wiki/Evil_twin_(wireless_networks)", "type": "Энциклопедия"},
+                    {"title": "MITM атаки в открытых сетях", "url": "https://www.acunetix.com/blog/articles/man-in-the-middle-attacks/", "type": "Технический блог"}
                 ],
                 "exploitation_time": "Мгновенно",
                 "success_rate": "100%",
-                "complexity": "Очень низкая"
+                "complexity": "Очень низкая",
+                "attack_scenarios": [
+                    "Пассивный сниффинг трафика",
+                    "Создание rogue access point",
+                    "DNS spoofing атаки",
+                    "SSL stripping атаки"
+                ]
             },
             "WPS_ENABLED": {
                 "risk_level": "ВЫСОКИЙ",
@@ -119,15 +172,25 @@ class WiFiSecurityAnalyzer:
                     "Обход WPS lockout",
                     "Уязвимости реализации WPS"
                 ],
-                "attack_tools": ["reaver", "bully", "pixiewps", "wpscrack"],
+                "attack_tools": [
+                    {"name": "reaver", "description": "Основной инструмент для WPS атак", "url": "https://github.com/t6x/reaver-wps-fork-t6x"},
+                    {"name": "bully", "description": "Альтернатива reaver", "url": "https://github.com/aanarchyy/bully"},
+                    {"name": "pixiewps", "description": "Оффлайн атака на WPS", "url": "https://github.com/wiire/pixiewps"},
+                    {"name": "wpscrack", "description": "Python-based WPS cracker", "url": "https://github.com/0x90/wpsik"}
+                ],
                 "articles": [
-                    {"title": "Взлом через WPS", "url": "https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup#Security_issues"},
-                    {"title": "Pixie Dust атака", "url": "https://github.com/wiire/pixiewps"},
-                    {"title": "WPS Brute-force", "url": "https://tools.kali.org/wireless-attacks/reaver"}
+                    {"title": "Взлом через WPS", "url": "https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup#Security_issues", "type": "Обзор уязвимостей"},
+                    {"title": "Pixie Dust атака", "url": "https://github.com/wiire/pixiewps", "type": "GitHub репозиторий"},
+                    {"title": "WPS Brute-force", "url": "https://tools.kali.org/wireless-attacks/reaver", "type": "Kali документация"}
                 ],
                 "exploitation_time": "2-10 часов",
                 "success_rate": "85%",
-                "complexity": "Низкая"
+                "complexity": "Низкая",
+                "attack_scenarios": [
+                    "Pixie Dust оффлайн взлом",
+                    "Brute-force PIN перебор",
+                    "WPS lockout обход"
+                ]
             }
         }
     
@@ -286,6 +349,7 @@ class WiFiSecurityAnalyzer:
         articles = []
         exploitation_info = {}
         security_recommendations = []
+        attack_scenarios = []
         
         auth_upper = auth.upper()
         enc_upper = encryption.upper()
@@ -308,6 +372,7 @@ class WiFiSecurityAnalyzer:
                 "Использовать дополнительное шифрование на уровне приложений",
                 "Регулярно мониторить сеть на неавторизованные подключения"
             ]
+            attack_scenarios = vuln_info["attack_scenarios"]
             
         elif 'WPA2' in auth_upper and 'TKIP' in enc_upper:
             vuln_info = self.vulnerability_db["WPA-TKIP"] 
@@ -327,6 +392,7 @@ class WiFiSecurityAnalyzer:
                 "Обновить прошивку роутера",
                 "Использовать сложные пароли длиной 15+ символов"
             ]
+            attack_scenarios = vuln_info["attack_scenarios"]
             
         elif 'WPA2' in auth_upper:
             vuln_info = self.vulnerability_db["WPA2-CCMP"]
@@ -346,6 +412,7 @@ class WiFiSecurityAnalyzer:
                 "Использовать WPA2-Enterprise при возможности",
                 "Регулярно менять пароль"
             ]
+            attack_scenarios = vuln_info["attack_scenarios"]
             
             if self.check_wps_status(ssid):
                 wps_vuln = self.vulnerability_db["WPS_ENABLED"]
@@ -355,6 +422,7 @@ class WiFiSecurityAnalyzer:
                 risk_level = "ВЫСОКИЙ"
                 security_score = 40
                 security_recommendations.append("Немедленно отключить WPS в настройках роутера")
+                attack_scenarios.extend(wps_vuln["attack_scenarios"])
             
         elif 'WPA3' in auth_upper:
             vuln_info = self.vulnerability_db["WPA3"]
@@ -373,6 +441,7 @@ class WiFiSecurityAnalyzer:
                 "Использовать сложные уникальные пароли",
                 "Отключить поддержку переходных режимов"
             ]
+            attack_scenarios = vuln_info["attack_scenarios"]
             
         elif 'OPEN' in auth_upper or 'OPEN' in enc_upper or encryption == 'None':
             vuln_info = self.vulnerability_db["OPEN"]
@@ -392,6 +461,7 @@ class WiFiSecurityAnalyzer:
                 "Использовать VPN для всего трафика",
                 "Включить фильтрацию по MAC-адресам"
             ]
+            attack_scenarios = vuln_info["attack_scenarios"]
         
         signal_strength = network.get('Signal', 0)
         if signal_strength > 80:
@@ -427,7 +497,7 @@ class WiFiSecurityAnalyzer:
             'signal_strength': signal_strength,
             'risk_level': risk_level,
             'vulnerabilities': vulnerabilities,
-            'attack_vectors': list(set(attack_vectors)),
+            'attack_vectors': attack_vectors,
             'security_score': security_score,
             'articles': articles,
             'bssid_count': bssid_count,
@@ -435,6 +505,7 @@ class WiFiSecurityAnalyzer:
             'radio_type': network.get('Radio_Type', 'Неизвестно'),
             'exploitation_info': exploitation_info,
             'security_recommendations': security_recommendations,
+            'attack_scenarios': attack_scenarios,
             'scan_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
     
@@ -775,47 +846,121 @@ class WiFiSecurityAnalyzer:
             font-size: 0.8em;
         }}
         
+        .attack-scenarios {{
+            background: #2a1a2a;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 3px solid #ff55ff;
+        }}
+        
+        .scenario-list {{
+            list-style: none;
+        }}
+        
+        .scenario-item {{
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: #3a2a3a;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #ddd;
+        }}
+        
         .tools-grid {{
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }}
-        
-        .tool-tag {{
-            background: #333;
-            padding: 5px 10px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            color: #bbb;
-            border: 1px solid #444;
-        }}
-        
-        .articles-list {{
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
             margin-top: 15px;
         }}
         
-        .article-item {{
-            padding: 12px 15px;
-            background: #1a2a2a;
+        .tool-card {{
+            background: #1a2a3a;
+            padding: 15px;
+            border-radius: 6px;
             border: 1px solid #334;
-            border-radius: 4px;
             transition: all 0.3s;
         }}
         
-        .article-item:hover {{
+        .tool-card:hover {{
+            border-color: #00ff88;
+            background: #223a4a;
+        }}
+        
+        .tool-name {{
+            color: #00ff88;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }}
+        
+        .tool-description {{
+            color: #ccc;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }}
+        
+        .tool-link {{
+            color: #ff6b35;
+            text-decoration: none;
+            font-size: 0.8em;
+            display: inline-block;
+            padding: 4px 8px;
+            background: #2a2a2a;
+            border-radius: 3px;
+        }}
+        
+        .tool-link:hover {{
+            text-decoration: underline;
+        }}
+        
+        .articles-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }}
+        
+        .article-card {{
+            background: #1a2a2a;
+            padding: 18px;
+            border-radius: 6px;
+            border: 1px solid #334;
+            transition: all 0.3s;
+        }}
+        
+        .article-card:hover {{
             border-color: #00ff88;
             background: #223a3a;
         }}
         
-        .article-link {{
+        .article-title {{
             color: #00ff88;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            line-height: 1.3;
+        }}
+        
+        .article-type {{
+            display: inline-block;
+            background: #334;
+            color: #aaa;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            margin-bottom: 10px;
+        }}
+        
+        .article-link {{
+            color: #ff6b35;
             text-decoration: none;
-            font-size: 0.9em;
-            display: block;
+            font-size: 0.85em;
+            display: inline-block;
+            padding: 4px 8px;
+            background: #2a2a2a;
+            border-radius: 3px;
         }}
         
         .article-link:hover {{
@@ -862,6 +1007,14 @@ class WiFiSecurityAnalyzer:
             .networks-sidebar {{
                 position: static;
                 max-height: 300px;
+            }}
+            
+            .tools-grid {{
+                grid-template-columns: 1fr;
+            }}
+            
+            .articles-grid {{
+                grid-template-columns: 1fr;
             }}
         }}
     </style>
@@ -1075,6 +1228,15 @@ class WiFiSecurityAnalyzer:
                 </div>
                 
                 <div class="detail-section">
+                    <div class="section-title">Сценарии атак</div>
+                    <div class="attack-scenarios">
+                        <ul class="scenario-list">
+                            ${{network.attack_scenarios.map(scenario => `<li class="scenario-item">${{scenario}}</li>`).join('')}}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
                     <div class="section-title">Выявленные уязвимости</div>
                     <ul class="vuln-list">
                         ${{network.vulnerabilities.map(vuln => `<li class="vuln-item">${{vuln}}</li>`).join('')}}
@@ -1084,16 +1246,24 @@ class WiFiSecurityAnalyzer:
                 <div class="detail-section">
                     <div class="section-title">Инструменты для атак</div>
                     <div class="tools-grid">
-                        ${{network.attack_vectors.map(tool => `<div class="tool-tag">${{tool}}</div>`).join('')}}
+                        ${{network.attack_vectors.map(tool => `
+                            <div class="tool-card">
+                                <div class="tool-name">${{tool.name}}</div>
+                                <div class="tool-description">${{tool.description}}</div>
+                                <a href="${{tool.url}}" class="tool-link" target="_blank">Скачать/Документация</a>
+                            </div>
+                        `).join('')}}
                     </div>
                 </div>
                 
                 <div class="detail-section">
                     <div class="section-title">Статьи и материалы</div>
-                    <div class="articles-list">
+                    <div class="articles-grid">
                         ${{network.articles.map(article => `
-                            <div class="article-item">
-                                <a href="${{article.url}}" class="article-link" target="_blank">${{article.title}}</a>
+                            <div class="article-card">
+                                <div class="article-title">${{article.title}}</div>
+                                <div class="article-type">${{article.type}}</div>
+                                <a href="${{article.url}}" class="article-link" target="_blank">Читать статью</a>
                             </div>
                         `).join('')}}
                     </div>
@@ -1142,6 +1312,68 @@ class WiFiSecurityAnalyzer:
         
         return filepath
     
+    def generate_additional_files(self, analysis_results):
+        """Генерация дополнительных файлов"""
+        self.ensure_reports_dir()
+        
+        # 1. JSON файл с сырыми данными
+        json_data = {
+            "scan_info": {
+                "timestamp": datetime.now().isoformat(),
+                "total_networks": len(analysis_results),
+                "scanner_version": "2.0",
+                "developer": "yoxiko"
+            },
+            "networks": analysis_results
+        }
+        
+        json_filename = f"wifi_raw_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        json_filepath = os.path.join(self.reports_dir, json_filename)
+        
+        with open(json_filepath, 'w', encoding='utf-8') as f:
+            json.dump(json_data, f, ensure_ascii=False, indent=2)
+        
+        # 2. CSV файл для табличного анализа
+        csv_filename = f"wifi_summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        csv_filepath = os.path.join(self.reports_dir, csv_filename)
+        
+        with open(csv_filepath, 'w', encoding='utf-8') as f:
+            f.write("SSID,Authentication,Encryption,Signal,Risk_Level,Security_Score,BSSID_Count,Channel\n")
+            for network in analysis_results:
+                f.write(f'"{network["ssid"]}","{network["authentication"]}","{network["encryption"]}",{network["signal_strength"]},{network["risk_level"]},{network["security_score"]},{network["bssid_count"]},"{network["channel"]}"\n')
+        
+        # 3. Текстовый отчет для быстрого просмотра
+        txt_filename = f"wifi_quick_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        txt_filepath = os.path.join(self.reports_dir, txt_filename)
+        
+        with open(txt_filepath, 'w', encoding='utf-8') as f:
+            f.write("=" * 60 + "\n")
+            f.write("БЫСТРЫЙ ОТЧЕТ ПО БЕЗОПАСНОСТИ WI-FI СЕТЕЙ\n")
+            f.write("=" * 60 + "\n\n")
+            f.write(f"Дата сканирования: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"Всего сетей: {len(analysis_results)}\n\n")
+            
+            critical_count = len([r for r in analysis_results if r['risk_level'] == 'КРИТИЧЕСКИЙ'])
+            if critical_count > 0:
+                f.write(f"⚠️  КРИТИЧЕСКИЕ СЕТИ ({critical_count}):\n")
+                for network in analysis_results:
+                    if network['risk_level'] == 'КРИТИЧЕСКИЙ':
+                        f.write(f"   • {network['ssid']} - {network['authentication']} - Сигнал: {network['signal_strength']}%\n")
+                f.write("\n")
+            
+            f.write("ВСЕ СЕТИ:\n")
+            for network in analysis_results:
+                f.write(f"• {network['ssid']}\n")
+                f.write(f"  Тип: {network['authentication']} | Шифрование: {network['encryption']}\n")
+                f.write(f"  Сигнал: {network['signal_strength']}% | Риск: {network['risk_level']} | Счет: {network['security_score']}/100\n")
+                f.write(f"  Канал: {network['channel']} | Точек доступа: {network['bssid_count']}\n\n")
+        
+        return {
+            "json": json_filepath,
+            "csv": csv_filepath,
+            "txt": txt_filepath
+        }
+    
     def main(self):
         print("Запуск анализатора безопасности Wi-Fi сетей")
         print("Разработчик: yoxiko")
@@ -1165,10 +1397,14 @@ class WiFiSecurityAnalyzer:
         print(f"Обнаружено сетей: {len(security_report)}")
         
         report_file = self.generate_html_report(security_report)
+        additional_files = self.generate_additional_files(security_report)
         
         print("=" * 60)
         print("Анализ завершен")
-        print(f"Отчет сохранен: {report_file}")
+        print(f"HTML отчет: {report_file}")
+        print(f"JSON данные: {additional_files['json']}")
+        print(f"CSV таблица: {additional_files['csv']}")
+        print(f"Текстовый отчет: {additional_files['txt']}")
         
         try:
             if platform.system() == 'Windows':
