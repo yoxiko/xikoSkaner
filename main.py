@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import subprocess
 import re
 import platform
@@ -13,7 +11,7 @@ class WiFiSecurityAnalyzer:
     def __init__(self):
         self.vulnerability_db = self.load_vulnerability_database()
         self.scan_results = []
-        self.reports_dir = "wifi_reports"
+        self.reports_dir = "1"
         
     def load_vulnerability_database(self):
         return {
@@ -367,7 +365,7 @@ class WiFiSecurityAnalyzer:
                 "complexity": vuln_info["complexity"]
             }
             security_recommendations = [
-                "Немедленно перейти на WPA2 или WPA3",
+                "Перейти на WPA2 или WPA3",
                 "Заменить оборудование, если не поддерживает современные протоколы",
                 "Использовать дополнительное шифрование на уровне приложений",
                 "Регулярно мониторить сеть на неавторизованные подключения"
@@ -464,16 +462,22 @@ class WiFiSecurityAnalyzer:
             attack_scenarios = vuln_info["attack_scenarios"]
         
         signal_strength = network.get('Signal', 0)
+        signal_info = []
+        
         if signal_strength > 80:
-            vulnerabilities.append("Очень сильный сигнал: зона действия распространяется далеко за пределы помещения")
-            vulnerabilities.append("Высокая вероятность обнаружения и атаки с большого расстояния")
+            signal_info.append("Очень сильный сигнал: зона действия распространяется далеко за пределы помещения")
+            signal_info.append("Высокая вероятность обнаружения и атаки с большого расстояния")
             security_score -= 10
         elif signal_strength > 60:
-            vulnerabilities.append("Сильный сигнал: хорошее покрытие для атакующего")
+            signal_info.append("Сильный сигнал: хорошее покрытие для атакующего")
             security_score -= 5
         elif signal_strength < 20:
-            vulnerabilities.append("Слабый сигнал: ограниченная зона для атак")
+            signal_info.append("Слабый сигнал: ограниченная зона для атак")
             security_score += 5
+        else:
+            signal_info.append("Средний уровень сигнала: стандартная зона покрытия")
+    
+        vulnerabilities.extend(signal_info)
         
         bssid_count = network.get('BSSID_Count', 1)
         if bssid_count > 1:
@@ -483,11 +487,40 @@ class WiFiSecurityAnalyzer:
         if channel != 'Неизвестно':
             vulnerabilities.append(f"Работа на канале {channel}: возможны помехи и целевые атаки")
         
+        if not security_recommendations:
+            security_recommendations = [
+                "Использовать сложные пароли длиной не менее 12 символов",
+                "Регулярно обновлять прошивку роутера",
+                "Отключить WPS если он не используется",
+                "Включить фильтрацию по MAC-адресам",
+                "Использовать скрытие SSID если возможно"
+            ]
+        
+        if not attack_scenarios:
+            attack_scenarios = [
+                "Пассивный мониторинг сетевого трафика",
+                "Активное сканирование на уязвимости",
+                "Тестирование на слабые пароли"
+            ]
+        
+        if not attack_vectors:
+            attack_vectors = [
+                {"name": "nmap", "description": "Сканер сетевой безопасности", "url": "https://nmap.org/"},
+                {"name": "wireshark", "description": "Анализатор сетевого трафика", "url": "https://www.wireshark.org/"}
+            ]
+        
+        if not articles:
+            articles = [
+                {"title": "Основы безопасности Wi-Fi сетей", "url": "https://www.kaspersky.ru/blog/wi-fi-security/10489/", "type": "Общедоступная статья"},
+                {"title": "Руководство по настройке безопасного Wi-Fi", "url": "https://www.wi-fi.org/security", "type": "Официальная документация"}
+            ]
+        
         if not vulnerabilities:
-            vulnerabilities.append("Неизвестный тип безопасности - требуется дополнительный анализ")
-            risk_level = "СРЕДНИЙ"
-            security_score = 50
-            
+            vulnerabilities = [
+                "Неизвестный тип безопасности - требуется дополнительный анализ",
+                "Рекомендуется провести детальное тестирование безопасности"
+            ]
+        
         security_score = max(0, min(100, security_score))
             
         return {
@@ -526,7 +559,7 @@ class WiFiSecurityAnalyzer:
             return None
         
         risk_order = {'КРИТИЧЕСКИЙ': 0, 'ВЫСОКИЙ': 1, 'СРЕДНИЙ': 2, 'НИЗКИЙ': 3, 'НЕИЗВЕСТНО': 4}
-        analysis_results.sort(key=lambda x: (risk_order.get(x['risk_level'], 999), -x['security_score']))
+        analysis_results.sort(key=lambda x: (risk_order.get(x['risk_level'], 999), -x['signal_strength']))
         
         return analysis_results
     
@@ -596,11 +629,21 @@ class WiFiSecurityAnalyzer:
             opacity: 0.8;
         }}
         
+        .networks-container {{
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }}
+        
         .controls {{
             display: flex;
             gap: 15px;
             margin-bottom: 25px;
             flex-wrap: wrap;
+            background: #111;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #222;
         }}
         
         .filter-btn {{
@@ -670,58 +713,52 @@ class WiFiSecurityAnalyzer:
             letter-spacing: 0.5px;
         }}
         
-        .networks-container {{
+        .networks-grid {{
             display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }}
         
-        .networks-sidebar {{
+        .network-card {{
             background: #111;
             border: 1px solid #222;
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 20px;
-            height: fit-content;
-            position: sticky;
-            top: 20px;
-        }}
-        
-        .network-list {{
-            list-style: none;
-            max-height: 600px;
-            overflow-y: auto;
-        }}
-        
-        .network-item {{
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
             cursor: pointer;
             transition: all 0.3s;
+            position: relative;
         }}
         
-        .network-item:hover {{
+        .network-card:hover {{
             border-color: #00ff88;
-            background: #222;
+            transform: translateY(-2px);
         }}
         
-        .network-item.active {{
+        .network-card.active {{
             border-color: #00ff88;
             background: #1a3a2a;
         }}
         
+        .network-header {{
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }}
+        
         .network-ssid {{
-            font-weight: 500;
-            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #fff;
+            flex-grow: 1;
         }}
         
         .network-risk {{
             font-size: 0.8em;
-            padding: 2px 8px;
-            border-radius: 10px;
-            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
         }}
         
         .risk-critical {{ background: #ff4444; color: #fff; }}
@@ -731,10 +768,48 @@ class WiFiSecurityAnalyzer:
         .risk-unknown {{ background: #757575; color: #fff; }}
         
         .network-details {{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.85em;
+        }}
+        
+        .detail-item {{
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #222;
+        }}
+        
+        .detail-label {{
+            color: #888;
+        }}
+        
+        .detail-value {{
+            color: #fff;
+            font-weight: 500;
+        }}
+        
+        .signal-bar {{
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }}
+        
+        .signal-level {{
+            height: 100%;
+            background: #00ff88;
+            border-radius: 3px;
+        }}
+        
+        .network-details-panel {{
             background: #111;
             border: 1px solid #222;
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 25px;
+            margin-top: 20px;
         }}
         
         .detail-section {{
@@ -751,39 +826,13 @@ class WiFiSecurityAnalyzer:
             padding-left: 10px;
         }}
         
-        .detail-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }}
-        
-        .detail-item {{
-            background: #1a1a1a;
-            padding: 15px;
-            border-radius: 4px;
-            border: 1px solid #333;
-        }}
-        
-        .detail-label {{
-            color: #888;
-            font-size: 0.8em;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-        }}
-        
-        .detail-value {{
-            color: #fff;
-            font-size: 0.95em;
-        }}
-        
         .security-score {{
             text-align: center;
             padding: 20px;
             background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
             border-radius: 6px;
             border: 1px solid #333;
+            margin-bottom: 20px;
         }}
         
         .score-value {{
@@ -999,14 +1048,16 @@ class WiFiSecurityAnalyzer:
             font-size: 0.8em;
         }}
         
-        @media (max-width: 968px) {{
-            .networks-container {{
+        .no-networks {{
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.1em;
+        }}
+        
+        @media (max-width: 768px) {{
+            .networks-grid {{
                 grid-template-columns: 1fr;
-            }}
-            
-            .networks-sidebar {{
-                position: static;
-                max-height: 300px;
             }}
             
             .tools-grid {{
@@ -1015,6 +1066,14 @@ class WiFiSecurityAnalyzer:
             
             .articles-grid {{
                 grid-template-columns: 1fr;
+            }}
+            
+            .controls {{
+                flex-direction: column;
+            }}
+            
+            .search-box {{
+                min-width: auto;
             }}
         }}
     </style>
@@ -1026,15 +1085,6 @@ class WiFiSecurityAnalyzer:
             <div>
                 <a href="https://t.me/yoxiko" class="developer-link" target="_blank">Разработчик: yoxiko</a>
             </div>
-        </div>
-        
-        <div class="controls">
-            <button class="filter-btn active" data-filter="all">Все сети</button>
-            <button class="filter-btn" data-filter="critical">Критический</button>
-            <button class="filter-btn" data-filter="high">Высокий</button>
-            <button class="filter-btn" data-filter="medium">Средний</button>
-            <button class="filter-btn" data-filter="low">Низкий</button>
-            <input type="text" class="search-box" placeholder="Поиск по имени сети..." id="searchInput">
         </div>
         
         <div class="stats">
@@ -1057,12 +1107,20 @@ class WiFiSecurityAnalyzer:
         </div>
         
         <div class="networks-container">
-            <div class="networks-sidebar">
-                <div class="section-title">Список сетей</div>
-                <ul class="network-list" id="networkList"></ul>
+            <div class="controls">
+                <button class="filter-btn active" data-filter="all">Все сети</button>
+                <button class="filter-btn" data-filter="critical">Критический</button>
+                <button class="filter-btn" data-filter="high">Высокий</button>
+                <button class="filter-btn" data-filter="medium">Средний</button>
+                <button class="filter-btn" data-filter="low">Низкий</button>
+                <input type="text" class="search-box" placeholder="Поиск по имени сети..." id="searchInput">
             </div>
             
-            <div class="network-details" id="networkDetails">
+            <div class="networks-grid" id="networksGrid">
+                <!-- Карточки сетей будут здесь -->
+            </div>
+            
+            <div class="network-details-panel" id="networkDetails">
                 <div class="security-score">
                     <div class="section-title">Общая безопасность</div>
                     <div class="score-value score-excellent" id="overallScore">-</div>
@@ -1080,7 +1138,7 @@ class WiFiSecurityAnalyzer:
     <script>
         const networksData = {networks_js};
         
-        const networkList = document.getElementById('networkList');
+        const networksGrid = document.getElementById('networksGrid');
         const networkDetails = document.getElementById('networkDetails');
         const filterButtons = document.querySelectorAll('.filter-btn');
         const searchInput = document.getElementById('searchInput');
@@ -1109,8 +1167,8 @@ class WiFiSecurityAnalyzer:
             return riskMap[risk] || 'unknown';
         }}
         
-        function renderNetworkList() {{
-            networkList.innerHTML = '';
+        function renderNetworksGrid() {{
+            networksGrid.innerHTML = '';
             
             const filteredNetworks = networksData.filter(network => {{
                 const matchesFilter = currentFilter === 'all' || 
@@ -1120,26 +1178,58 @@ class WiFiSecurityAnalyzer:
             }});
             
             if (filteredNetworks.length === 0) {{
-                networkList.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">Сети не найдены</div>';
+                networksGrid.innerHTML = '<div class="no-networks">Сети не найдены</div>';
                 return;
             }}
             
             filteredNetworks.forEach((network, index) => {{
-                const li = document.createElement('li');
-                li.className = `network-item ${{selectedNetwork === index ? 'active' : ''}}`;
-                li.onclick = () => selectNetwork(index);
+                const card = document.createElement('div');
+                card.className = `network-card ${{selectedNetwork === index ? 'active' : ''}}`;
+                card.onclick = () => selectNetwork(index);
                 
-                li.innerHTML = `
-                    <div class="network-ssid">${{network.ssid}}</div>
-                    <div class="network-risk risk-${{getRiskText(network.risk_level)}}">
-                        ${{network.risk_level}}
+                const signalWidth = Math.max(10, network.signal_strength); // Минимум 10% для видимости
+                
+                card.innerHTML = `
+                    <div class="network-header">
+                        <div class="network-ssid">${{network.ssid}}</div>
+                        <div class="network-risk risk-${{getRiskText(network.risk_level)}}">
+                            ${{network.risk_level}}
+                        </div>
                     </div>
-                    <div style="font-size: 0.8em; color: #888; margin-top: 5px;">
-                        Сигнал: ${{network.signal_strength}}% | Счет: ${{network.security_score}}
+                    
+                    <div class="network-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Сигнал:</span>
+                            <span class="detail-value">${{network.signal_strength}}%</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Безопасность:</span>
+                            <span class="detail-value">${{network.security_score}}/100</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Аутентификация:</span>
+                            <span class="detail-value">${{network.authentication}}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Шифрование:</span>
+                            <span class="detail-value">${{network.encryption}}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Канал:</span>
+                            <span class="detail-value">${{network.channel}}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Точек доступа:</span>
+                            <span class="detail-value">${{network.bssid_count}}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="signal-bar">
+                        <div class="signal-level" style="width: ${{signalWidth}}%"></div>
                     </div>
                 `;
                 
-                networkList.appendChild(li);
+                networksGrid.appendChild(card);
             }});
         }}
         
@@ -1153,56 +1243,52 @@ class WiFiSecurityAnalyzer:
             networkDetails.innerHTML = `
                 <div class="detail-section">
                     <div class="section-title">Основная информация</div>
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <div class="detail-label">Имя сети (SSID)</div>
-                            <div class="detail-value">${{network.ssid}}</div>
+                    <div class="security-score">
+                        <div class="score-value ${{getScoreClass(network.security_score)}}">${{network.security_score}}</div>
+                        <div>Общий счет безопасности</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 4px; border: 1px solid #333;">
+                            <div style="color: #888; font-size: 0.8em; margin-bottom: 5px;">Имя сети</div>
+                            <div style="color: #fff; font-weight: 500;">${{network.ssid}}</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Уровень риска</div>
-                            <div class="detail-value">
-                                <span class="network-risk risk-${{getRiskText(network.risk_level)}}">
-                                    ${{network.risk_level}}
-                                </span>
-                            </div>
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 4px; border: 1px solid #333;">
+                            <div style="color: #888; font-size: 0.8em; margin-bottom: 5px;">Уровень риска</div>
+                            <div><span class="network-risk risk-${{getRiskText(network.risk_level)}}">${{network.risk_level}}</span></div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Счет безопасности</div>
-                            <div class="detail-value">${{network.security_score}}/100</div>
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 4px; border: 1px solid #333;">
+                            <div style="color: #888; font-size: 0.8em; margin-bottom: 5px;">Сигнал</div>
+                            <div style="color: #fff; font-weight: 500;">${{network.signal_strength}}%</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Точек доступа</div>
-                            <div class="detail-value">${{network.bssid_count}}</div>
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 4px; border: 1px solid #333;">
+                            <div style="color: #888; font-size: 0.8em; margin-bottom: 5px;">Точек доступа</div>
+                            <div style="color: #fff; font-weight: 500;">${{network.bssid_count}}</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="detail-section">
                     <div class="section-title">Технические детали</div>
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <div class="detail-label">Аутентификация</div>
-                            <div class="detail-value">${{network.authentication}}</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 4px; border: 1px solid #333;">
+                            <div style="color: #888; font-size: 0.8em; margin-bottom: 5px;">Аутентификация</div>
+                            <div style="color: #fff; font-weight: 500;">${{network.authentication}}</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Шифрование</div>
-                            <div class="detail-value">${{network.encryption}}</div>
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 4px; border: 1px solid #333;">
+                            <div style="color: #888; font-size: 0.8em; margin-bottom: 5px;">Шифрование</div>
+                            <div style="color: #fff; font-weight: 500;">${{network.encryption}}</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Уровень сигнала</div>
-                            <div class="detail-value">${{network.signal_strength}}%</div>
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 4px; border: 1px solid #333;">
+                            <div style="color: #888; font-size: 0.8em; margin-bottom: 5px;">Канал</div>
+                            <div style="color: #fff; font-weight: 500;">${{network.channel}}</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Канал</div>
-                            <div class="detail-value">${{network.channel}}</div>
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 4px; border: 1px solid #333;">
+                            <div style="color: #888; font-size: 0.8em; margin-bottom: 5px;">Тип радио</div>
+                            <div style="color: #fff; font-weight: 500;">${{network.radio_type}}</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Тип радио</div>
-                            <div class="detail-value">${{network.radio_type}}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Время сканирования</div>
-                            <div class="detail-value">${{network.scan_time}}</div>
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 4px; border: 1px solid #333;">
+                            <div style="color: #888; font-size: 0.8em; margin-bottom: 5px;">Время сканирования</div>
+                            <div style="color: #fff; font-weight: 500;">${{network.scan_time}}</div>
                         </div>
                     </div>
                 </div>
@@ -1277,7 +1363,7 @@ class WiFiSecurityAnalyzer:
                 </div>
             `;
             
-            renderNetworkList();
+            renderNetworksGrid();
         }}
         
         filterButtons.forEach(button => {{
@@ -1285,16 +1371,17 @@ class WiFiSecurityAnalyzer:
                 filterButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 currentFilter = button.dataset.filter;
-                renderNetworkList();
+                renderNetworksGrid();
             }});
         }});
         
         searchInput.addEventListener('input', (e) => {{
             currentSearch = e.target.value;
-            renderNetworkList();
+            renderNetworksGrid();
         }});
         
-        renderNetworkList();
+        // Инициализация
+        renderNetworksGrid();
         
         if (networksData.length > 0) {{
             selectNetwork(0);
@@ -1316,7 +1403,6 @@ class WiFiSecurityAnalyzer:
         """Генерация дополнительных файлов"""
         self.ensure_reports_dir()
         
-        # 1. JSON файл с сырыми данными
         json_data = {
             "scan_info": {
                 "timestamp": datetime.now().isoformat(),
@@ -1333,7 +1419,6 @@ class WiFiSecurityAnalyzer:
         with open(json_filepath, 'w', encoding='utf-8') as f:
             json.dump(json_data, f, ensure_ascii=False, indent=2)
         
-        # 2. CSV файл для табличного анализа
         csv_filename = f"wifi_summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
         csv_filepath = os.path.join(self.reports_dir, csv_filename)
         
@@ -1342,7 +1427,6 @@ class WiFiSecurityAnalyzer:
             for network in analysis_results:
                 f.write(f'"{network["ssid"]}","{network["authentication"]}","{network["encryption"]}",{network["signal_strength"]},{network["risk_level"]},{network["security_score"]},{network["bssid_count"]},"{network["channel"]}"\n')
         
-        # 3. Текстовый отчет для быстрого просмотра
         txt_filename = f"wifi_quick_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
         txt_filepath = os.path.join(self.reports_dir, txt_filename)
         
@@ -1355,7 +1439,7 @@ class WiFiSecurityAnalyzer:
             
             critical_count = len([r for r in analysis_results if r['risk_level'] == 'КРИТИЧЕСКИЙ'])
             if critical_count > 0:
-                f.write(f"⚠️  КРИТИЧЕСКИЕ СЕТИ ({critical_count}):\n")
+                f.write(f"  КРИТИЧЕСКИЕ СЕТИ ({critical_count}):\n")
                 for network in analysis_results:
                     if network['risk_level'] == 'КРИТИЧЕСКИЙ':
                         f.write(f"   • {network['ssid']} - {network['authentication']} - Сигнал: {network['signal_strength']}%\n")
